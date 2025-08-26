@@ -17,6 +17,14 @@ namespace StudentRegistration.Data.Interfaces
         Task<UsersDTO> GetUserId(Guid id);
 
         /// <summary>
+        /// Permite el inicio de sesión
+        /// </summary>
+        /// <param name="UserName">Usurio que desea iniciar sesión</param>
+        /// <param name="Password">Clave que desea iniciar sesión</param>
+        /// <returns>Entrega el un objeto con data si se logro iniciar sesión y vacio si no se inicio sesión</returns>
+        Task<UserLoginDTO> LogIn(string UserName, string Password);
+
+        /// <summary>
         /// Permite el cierre de sesión para un usuario
         /// </summary>
         /// <param name="id">Id del usuario que desea cerrar la sesión</param>

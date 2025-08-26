@@ -35,13 +35,5 @@ namespace StudentRegistration.Data.Interfaces
         /// <param name="id">Id del estudiante</param>
         /// <returns>Retorna una lista con las asignaturas que tiene el estudiante</returns>
         Task<IEnumerable<SubjectsByStudentDTO>> GetSubjectsByStudent(Guid id);
-
-        /// <summary>
-        /// Registra una asignatura a un estudiente
-        /// </summary>
-        /// <param name="IdStudent">Id del estudiante</param>
-        /// <param name="IdSubject">Id de la materia</param>
-        /// <returns>Retorna un booleano para identificar si el registro fue satisfactorio</returns>
-        Task<Boolean> registerSubject(Guid IdStudent, int IdSubject);
     }
 }

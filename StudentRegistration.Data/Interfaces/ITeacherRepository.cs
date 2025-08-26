@@ -1,10 +1,11 @@
-﻿using StudentRegistration.Data.DTOs;
-using StudentRegistration.Data.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StudentRegistration.Data.DTOs;
+using StudentRegistration.Data.Models;
+
 
 namespace StudentRegistration.Data.Interfaces
 {
@@ -35,13 +36,5 @@ namespace StudentRegistration.Data.Interfaces
         /// <param name="id">Id del profesor</param>
         /// <returns>Retorna una lista con las asignaturas que imparte el profesor</returns>
         Task<IEnumerable<SubjectsByTeacherDTO>> GetSubjectsByTeacher(Guid id);
-
-        /// <summary>
-        /// Registra una asignatura a un estudiente
-        /// </summary>
-        /// <param name="IdTeacher">Id del profesor</param>
-        /// <param name="IdSubject">Id de la materia</param>
-        /// <returns>Retorna un booleano para identificar si el registro fue satisfactorio</returns>
-        Task<Boolean> registerSubject(Guid IdTeacher, int IdSubject);
     }
 }

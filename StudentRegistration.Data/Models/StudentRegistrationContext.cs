@@ -19,13 +19,13 @@ public partial class StudentRegistrationContext : DbContext
 
     public virtual DbSet<IdentificationType> IdentificationTypes { get; set; }
 
+    public virtual DbSet<LogUser> LogUsers { get; set; }
+
     public virtual DbSet<Program> Programs { get; set; }
 
     public virtual DbSet<ProgramStudent> ProgramStudents { get; set; }
 
     public virtual DbSet<Rol> Rols { get; set; }
-
-    public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
 
@@ -36,6 +36,8 @@ public partial class StudentRegistrationContext : DbContext
     public virtual DbSet<SubjectTeacher> SubjectTeachers { get; set; }
 
     public virtual DbSet<Teacher> Teachers { get; set; }
+
+    public virtual DbSet<TypeOfEvent> TypeOfEvents { get; set; }
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
@@ -94,6 +96,30 @@ public partial class StudentRegistrationContext : DbContext
                 .HasColumnName("Identification_Type_Name");
         });
 
+        modelBuilder.Entity<LogUser>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LogUsers__3214EC0751869287");
+
+            entity.Property(e => e.DateRegister).HasColumnType("datetime");
+            entity.Property(e => e.ErrorMessage)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.EventDetails)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.IpRegister)
+                .HasMaxLength(15)
+                .IsUnicode(false);
+            entity.Property(e => e.UserName)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.IdTypeEventNavigation).WithMany(p => p.LogUsers)
+                .HasForeignKey(d => d.IdTypeEvent)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_IdTypeOfEventsLogUsers");
+        });
+
         modelBuilder.Entity<Program>(entity =>
         {
             entity.HasKey(e => e.IdProgram).HasName("PK__Program__44CAD3892AC7FCCB");
@@ -140,19 +166,6 @@ public partial class StudentRegistrationContext : DbContext
                 .HasMaxLength(15)
                 .IsUnicode(false)
                 .HasColumnName("Rol_Name");
-        });
-
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity.HasNoKey();
-
-            entity.Property(e => e.IdRoles)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("Id_Roles");
-            entity.Property(e => e.RoleName)
-                .HasMaxLength(15)
-                .IsUnicode(false)
-                .HasColumnName("Role_Name");
         });
 
         modelBuilder.Entity<Student>(entity =>
@@ -289,6 +302,15 @@ public partial class StudentRegistrationContext : DbContext
                 .HasConstraintName("FK__Teachers__User_I__74AE54BC");
         });
 
+        modelBuilder.Entity<TypeOfEvent>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__TypeOfEv__3214EC071EB9054B");
+
+            entity.Property(e => e.EventName)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<UserRole>(entity =>
         {
             entity
@@ -316,7 +338,11 @@ public partial class StudentRegistrationContext : DbContext
         {
             entity.HasKey(e => e.IdUsers).HasName("PK__Users_Lo__FB0668EE6569EA66");
 
-            entity.ToTable("Users_Login");
+            entity.ToTable("Users_Login", tb =>
+                {
+                    tb.HasTrigger("TR_Insert_Users_HashPassword");
+                    tb.HasTrigger("TR_Update_Users_HashPassword");
+                });
 
             entity.Property(e => e.IdUsers)
                 .HasDefaultValueSql("(newid())")
@@ -328,6 +354,7 @@ public partial class StudentRegistrationContext : DbContext
             entity.Property(e => e.DateLastLogin)
                 .HasColumnType("datetime")
                 .HasColumnName("DateLast_Login");
+            entity.Property(e => e.LogOutDate).HasColumnType("datetime");
             entity.Property(e => e.PasswordHash)
                 .HasMaxLength(256)
                 .HasColumnName("Password_Hash");
