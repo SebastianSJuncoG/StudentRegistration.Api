@@ -37,7 +37,7 @@ namespace StudentRegistration.Data.DAL
 
             return await _dbContext.Subjects
                                    .Where(w => listRegistredSubjects.Contains(w.IdSubject))
-                                   .ToListAsync();
+                                   .ToListAsync() ?? new List<Subject>();
         }
 
         public async Task<Boolean> registerSubjectByStudent(SubjectStudent NewRegister)

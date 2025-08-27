@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StudentRegistration.Data.DTOs;
 using StudentRegistration.Data.Interfaces;
 using StudentRegistration.Data.Models;
+using StudentRegistration.Data.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,17 +20,12 @@ namespace StudentRegistration.Data.DAL
             _dbContext = context;
         }
 
-        public async Task<IEnumerable<Teacher>> GetTeachers(int actualPage, int recordsQuantity, string firstName, string lastName, string documentNumber)
+        public async Task<IEnumerable<Teacher>> GetTeachers(int actualPage, int recordsQuantity)
         {
             return await _dbContext.Teachers.OrderBy(x => x.IdTeacher)
-                                            .Where(w =>
-                                                   w.FirstName.Contains(firstName) ||
-                                                   w.LastName.Contains(lastName) ||
-                                                   w.DocumentNumber.Contains(documentNumber)
-                                            )
                                             .Skip(actualPage)
                                             .Take(recordsQuantity)
-                                            .ToListAsync();
+                                            .ToListAsync() ?? new List<Teacher>();
         }
 
         public async Task<Teacher> GetTeachersId(Guid id)
@@ -40,9 +35,9 @@ namespace StudentRegistration.Data.DAL
             return response;
         }
 
-        public async Task<IEnumerable<SubjectsByTeacherDTO>> GetSubjectsByTeacher(Guid id)
+        public async Task<IEnumerable<SubjectByTeacherResponse>> GetSubjectsByTeacher(Guid id)
         {
-            return (IEnumerable<SubjectsByTeacherDTO>)await _dbContext.SubjectTeachers
+            return (IEnumerable<SubjectByTeacherResponse>)await _dbContext.SubjectTeachers
                                                                       .Where(w => w.IdTeacher == id)
                                                                       .ToListAsync();
         }

@@ -90,6 +90,9 @@ public partial class StudentRegistrationContext : DbContext
             entity.ToTable("Identification_Type");
 
             entity.Property(e => e.IdIdentificationType).HasColumnName("Id_Identification_Type");
+            entity.Property(e => e.Abbreviation)
+                .HasMaxLength(5)
+                .IsUnicode(false);
             entity.Property(e => e.IdentificationTypeName)
                 .HasMaxLength(50)
                 .IsUnicode(false)

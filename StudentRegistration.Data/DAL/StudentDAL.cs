@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using StudentRegistration.Data.Interfaces;
+using StudentRegistration.Data.Models;
+using StudentRegistration.Data.Models.Responses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using StudentRegistration.Data.DTOs;
-using StudentRegistration.Data.Interfaces;
-using StudentRegistration.Data.Models;
 
 namespace StudentRegistration.Data.DAL
 {
@@ -19,17 +19,12 @@ namespace StudentRegistration.Data.DAL
             _dbContext = context;
         }
 
-        public async Task<IEnumerable<Student>> GetStudents(int actualPage, int recordsQuantity, string firstName, string lastName, string documentNumber)
+        public async Task<IEnumerable<Student>> GetStudents(int actualPage, int recordsQuantity)
         {
             return await _dbContext.Students.OrderBy(x => x.IdStudents)
-                                            .Where(w =>
-                                                   w.FirstName.Contains(firstName) ||
-                                                   w.LastName.Contains(lastName) ||
-                                                   w.DocumentNumber.Contains(documentNumber)
-                                            )
                                             .Skip(actualPage)
                                             .Take(recordsQuantity)
-                                            .ToListAsync();
+                                            .ToListAsync() ?? new List<Student>();
         }
 
         public async Task<Student> GetStudentsId(Guid id)
@@ -39,11 +34,85 @@ namespace StudentRegistration.Data.DAL
             return response;
         }
 
-        public async Task<IEnumerable<SubjectsByStudentDTO>> GetSubjectsByStudent(Guid id)
+        public async Task<IEnumerable<SubjectByStudentResponse>> GetSubjectsByStudent(Guid id)
         {
-            return (IEnumerable<SubjectsByStudentDTO>) await _dbContext.SubjectStudents
-                                                                       .Where(w => w.IdStudents == id)
-                                                                       .ToListAsync();
+            List<SubjectByStudentResponse> subjectsDTOs = await _dbContext.SubjectStudents
+                                                        .Where(w => w.IdStudents == id)
+                                                        .Select(s => new SubjectByStudentResponse
+                                                        {
+                                                            Id_Students = s.IdStudents,
+                                                            Id_Subject = s.IdSubject,
+                                                            Subject_Name = (_dbContext.Subjects.Where(ws => ws.IdSubject == s.IdSubject).Select(ss => ss.SubjectName).FirstOrDefault() ?? ""),
+                                                            Num_Credits = (_dbContext.Subjects.Where(ws => ws.IdSubject == s.IdSubject).Select(ss => ss.NumCredits).FirstOrDefault())
+                                                        })
+                                                        .ToListAsync() ?? new List<SubjectByStudentResponse>();
+
+            return subjectsDTOs ?? new List<SubjectByStudentResponse>();
+        }
+
+        public async Task<bool> AddStudent(Student student)
+        {
+            try
+            {
+                _dbContext.Students.Add(student);
+
+                int result = await _dbContext.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateStudent(Student student)
+        {
+            try
+            {
+                student.User = await _dbContext.UsersLogins.FirstOrDefaultAsync(f => f.IdUsers == student.UserId) ?? new UsersLogin();
+
+                if (student.User.IdUsers == Guid.Empty)
+                {
+                    return false;
+                }
+
+                _dbContext.Entry(student).State = EntityState.Modified;
+
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteStudent(Guid idStudent)
+        {
+            try
+            {
+                var student = await _dbContext.Students.FindAsync(idStudent);
+
+                if (student != null)
+                {
+                    _dbContext.Students.Remove(student);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
         }
     }
 }

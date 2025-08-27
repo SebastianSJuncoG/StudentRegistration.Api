@@ -1,9 +1,10 @@
-﻿using System;
+﻿using StudentRegistration.Data.Models;
+using StudentRegistration.Data.Models.Responses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StudentRegistration.Data.DTOs;
 
 namespace StudentRegistration.Data.Interfaces
 {
@@ -14,7 +15,21 @@ namespace StudentRegistration.Data.Interfaces
         /// </summary>
         /// <param name="id">Id del usuario</param>
         /// <returns>Retorna un usuario en especifico según su ID</returns>
-        Task<UsersDTO> GetUserId(Guid id);
+        Task<UserResponse> GetUserId(Guid id);
+
+        /// <summary>
+        /// Permite buscar usuarios por su username
+        /// </summary>
+        /// <param name="userName">Username del usuario</param>
+        /// <returns>Retorna el objeto del usuario encontrado</returns>
+        Task<UsersLogin> GetUserByUserName(string userName);
+
+        /// <summary>
+        /// Permite crear usuarios 
+        /// </summary>
+        /// <param name="user">Objeto del usuario a crear</param>
+        /// <returns>Retorna un bool para indicar si la creación fue satisfactoria</returns>
+        Task<UserResponse> AddUser(UsersLogin user);
 
         /// <summary>
         /// Permite el inicio de sesión
@@ -22,7 +37,7 @@ namespace StudentRegistration.Data.Interfaces
         /// <param name="UserName">Usurio que desea iniciar sesión</param>
         /// <param name="Password">Clave que desea iniciar sesión</param>
         /// <returns>Entrega el un objeto con data si se logro iniciar sesión y vacio si no se inicio sesión</returns>
-        Task<UserLoginDTO> LogIn(string UserName, string Password);
+        Task<UserLoginResponse> LogIn(string UserName, string Password);
 
         /// <summary>
         /// Permite el cierre de sesión para un usuario

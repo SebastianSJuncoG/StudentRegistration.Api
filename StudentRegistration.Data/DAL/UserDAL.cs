@@ -1,8 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using StudentRegistration.Data.DTOs;
 using StudentRegistration.Data.Interfaces;
 using StudentRegistration.Data.Models;
+using StudentRegistration.Data.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -21,9 +21,9 @@ namespace StudentRegistration.Data.DAL
             _dbContext = context;
         }
 
-        public async Task<UsersDTO> GetUserId(Guid Id)
+        public async Task<UserResponse> GetUserId(Guid Id)
         {
-            return await _dbContext.UsersLogins.Select(s => new UsersDTO
+            return await _dbContext.UsersLogins.Select(s => new UserResponse
             {
                 Id = s.IdUsers,
                 UserName = s.UserName,
@@ -32,20 +32,61 @@ namespace StudentRegistration.Data.DAL
                 BlockingAttempts = s.BlockingAttempts,
                 DateLastLogin = s.DateLastLogin,
                 Active = s.Active
-            }).FirstOrDefaultAsync(f => f.Id == Id) ?? new UsersDTO();
+            }).FirstOrDefaultAsync(f => f.Id == Id) ?? new UserResponse();
         }
 
-        public async Task<UserLoginDTO> LogIn(string UserName, string Password)
+        public async Task<UsersLogin> GetUserByUserName(string userName)
+        {
+            try
+            {
+                return await _dbContext.UsersLogins.FirstOrDefaultAsync(f => f.UserName == userName) ?? new UsersLogin();
+            }
+            catch (Exception ex)
+            {
+                return new UsersLogin();
+            }
+
+        }
+
+        public async Task<UserResponse> AddUser(UsersLogin user)
+        {
+            try
+            {
+                _dbContext.UsersLogins.Add(user);
+
+                int result = await _dbContext.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    var userResponse = new UserResponse
+                    {
+                        Id = user.IdUsers,
+                        UserName = user.UserName,
+                        CreationDate = user.CreationDate
+                    };
+
+                    return userResponse;
+                }
+
+                return new UserResponse();
+            }
+            catch (Exception ex)
+            {
+                return new UserResponse();
+            }
+        }
+
+        public async Task<UserLoginResponse> LogIn(string UserName, string Password)
         {
             var usernameParam = new SqlParameter("@Username", UserName);
             var passwordParam = new SqlParameter("@Password", Password);
 
-            var resultSP = await _dbContext.Set<UserLoginDTO>()
+            var resultSP = await _dbContext.Set<UserLoginResponse>()
                                     .FromSqlRaw("EXEC SP_User_Login @Username, @Password",
                                         usernameParam, passwordParam)
                                     .FirstOrDefaultAsync();
 
-            var userLoginDto = new UserLoginDTO
+            var userLoginResponse = new UserLoginResponse
             {
                 Id_Users = resultSP.Id_Users,
                 UserName = resultSP.UserName,
@@ -58,7 +99,7 @@ namespace StudentRegistration.Data.DAL
             };
 
             // 2. Ejecuta la consulta de forma asíncrona y espera el resultado.
-            return userLoginDto;
+            return userLoginResponse;
         }
 
         public async Task<Boolean> LogOut(Guid Id)

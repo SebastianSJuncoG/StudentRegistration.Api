@@ -9,6 +9,8 @@ public partial class IdentificationType
 
     public string? IdentificationTypeName { get; set; }
 
+    public string Abbreviation { get; set; } = null!;
+
     public virtual ICollection<Administrative> Administratives { get; set; } = new List<Administrative>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentRegistration.Data.DTOs
+namespace StudentRegistration.Services.DTOs
 {
-    public class UsersDTO
+    public class UserDTO
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string UserName { get; set; }
         public string? TempPassword { get; set; }
         public DateTime CreationDate { get; set; }

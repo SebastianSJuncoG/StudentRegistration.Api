@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StudentRegistration.Services.Enums
+{
+    public enum TipoUsuario
+    {
+        Estudiante = 1,
+        Profesor = 2,
+        Administrativo = 3
+    }
+}

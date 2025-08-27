@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StudentRegistration.Data.DTOs
+namespace StudentRegistration.Data.Models.Responses
 {
-    public class SubjectsByTeacherDTO
+    public class SubjectByTeacherResponse
     {
         public Guid Id_Teacher { get; set; }
         public string firstName { get; set; }
