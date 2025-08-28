@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace StudentRegistration.Services.DTOs
 {
-    public class SubjectByStudentDTO
+    public class AddSubjectByStudentDTO
     {
-        public Guid? Id_Students { get; set; }
+        public Guid Id_Students { get; set; }
         public int Id_Subject { get; set; }
-        public string? Subject_Name { get; set; }
-        public int? Num_Credits { get; set; }
     }
 }

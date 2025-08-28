@@ -42,5 +42,26 @@ namespace StudentRegistration.Data.Interfaces
         /// <param name="IdSubject">Id de la materia</param>
         /// <returns>Retorna un booleano para identificar si el registro fue satisfactorio</returns>
         Task<Boolean> registerTeacherToSubject(SubjectTeacher NewRegister);
+
+        /// <summary>
+        /// Permite editar una materia para un estudiante
+        /// </summary>
+        /// <param name="program">Objeto de la materia a editar</param>
+        /// <returns>Retorna un bool para indicar si se edito de forma correcta</returns>
+        Task<bool> UpdateSubjectByStudent(SubjectStudent subjectStudent);
+
+        /// <summary>
+        /// Permite eliminar una materia para un estudiante
+        /// </summary>
+        /// <param name="program">Objeto de la materia a eliminar</param>
+        /// <returns>Retorna un bool para indicar si se elimino de forma correcta</returns>
+        Task<bool> DeleteSubjectByStudent(int id);
+
+        /// <summary>
+        /// Entrega la cantidad de creditos que ha usado un estudiante
+        /// </summary>
+        /// <param name="Id">Id del estudiante</param>
+        /// <returns>Entrega la cantidad de creditos que ha usado un estudiante</returns>
+        Task<int> CreditCouting(Guid Id);
     }
 }

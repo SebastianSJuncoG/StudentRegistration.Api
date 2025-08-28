@@ -34,11 +34,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IStudentsRepository, StudentDAL>();
 builder.Services.AddScoped<IProgramRepository, ProgramDAL>();
 builder.Services.AddScoped<IUsersLoginRepository, UserDAL>();
+builder.Services.AddScoped<ISubjectRepository, SubjectDAL>();
 
 // Capa de servicio
 builder.Services.AddScoped<IStudentsService, StudentService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IUsersLoginService, UserLoginService>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
 
 // Servicios para el Swagger
 builder.Services.AddEndpointsApiExplorer();

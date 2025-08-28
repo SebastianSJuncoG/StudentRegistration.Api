@@ -20,7 +20,7 @@ namespace StudentRegistration.Api.Controllers.Students
         [HttpGet]
         public async Task<IActionResult> GetStudents(int actualPage, int recordsQuantity)
         {
-            var apiResponse = await _studentsService.GetStudents(actualPage, recordsQuantity);
+            var apiResponse = await _studentsService.GetStudents(actualPage - 1, recordsQuantity);
 
             if (apiResponse.Status == 200) return Ok(apiResponse);
 

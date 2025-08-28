@@ -36,7 +36,7 @@ namespace StudentRegistration.Data.DAL
                                                   .ToList();
 
             return await _dbContext.Subjects
-                                   .Where(w => listRegistredSubjects.Contains(w.IdSubject))
+                                   .Where(w => !listRegistredSubjects.Contains(w.IdSubject))
                                    .ToListAsync() ?? new List<Subject>();
         }
 
@@ -70,6 +70,55 @@ namespace StudentRegistration.Data.DAL
             {
                 return false;
             }
+        }
+
+        public async Task<bool> UpdateSubjectByStudent(SubjectStudent subjectStudent)
+        {
+            try
+            {
+                _dbContext.Entry(subjectStudent).State = EntityState.Modified;
+
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteSubjectByStudent(int id)
+        {
+            try
+            {
+                var subjectByStudent = await _dbContext.SubjectStudents.FindAsync(id);
+
+                if (subjectByStudent != null)
+                {
+                    _dbContext.SubjectStudents.Remove(subjectByStudent);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        public async Task<int> CreditCouting(Guid id)
+        {
+            var listRegistredSubjects = _dbContext.SubjectStudents
+                                                  .Where(w => w.IdStudents == id)
+                                                  .Select(s => s.IdSubject)
+                                                  .ToList();
+
+            return await _dbContext.Subjects
+                                   .Where(w => listRegistredSubjects.Contains(w.IdSubject))
+                                   .SumAsync(s => s.NumCredits);
         }
     }
 }
