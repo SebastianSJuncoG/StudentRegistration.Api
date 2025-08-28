@@ -6,6 +6,8 @@ using StudentRegistration.Services.Interfaces;
 
 namespace StudentRegistration.Api.Controllers.UsersLogin
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class UsersLoginController : ControllerBase
     {
         private readonly IUsersLoginService _usersLoginService;
@@ -15,7 +17,7 @@ namespace StudentRegistration.Api.Controllers.UsersLogin
             _usersLoginService = usersLoginService;
         }
 
-        [HttpGet("GetUserByUserName")]
+        [HttpGet]
         public async Task<IActionResult> GetUserByUserName(string userName)
         {
             var apiResponse = await _usersLoginService.GetUserByUserName(userName);
@@ -27,7 +29,7 @@ namespace StudentRegistration.Api.Controllers.UsersLogin
             return NotFound(apiResponse);
         }
 
-        [HttpPost("addUser")]
+        [HttpPost]
         public async Task<IActionResult> AddUser(AddUserDTO user)
         {
             var apiResponse = await _usersLoginService.AddUser(user);
